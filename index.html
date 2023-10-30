@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>D3.js Circle Visualization</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+  </head>
+  <body>
+    <svg width="500" height="500"></svg>
+
+    <script>
+      // Read data from the CSV file
+      d3.csv("data.csv").then(function(data) {
+        // Define the size and position of the SVG
+        const svgWidth = 500;
+        const svgHeight = 500;
+
+        // Create an SVG element
+        const svg = d3.select("svg");
+
+        // Define a scale for mapping data values to circle sizes
+        const sizeScale = d3.scaleLinear().domain([0, d3.max(data, d => +d.value)]).range([5, 50]);
+
+        // Create circles based on the data
+        svg
+          .selectAll("circle")
+          .data(data)
+          .enter()
+          .append("circle")
+          .attr("cx", (d, i) => (i + 1) * (svgWidth / (data.length + 1)))
+          .attr("cy", svgHeight / 2)
+          .attr("r", d => sizeScale(+d.value))
+          .attr("fill", "steelblue")
+          .on("click", showDetails);
+
+        svg
+          .selectAll("text")
+          .data(data)
+          .enter()
+          .append("text")
+          .text(d => d.occupation)
+          .attr("x", (d, i) => (i + 1) * (svgWidth / (data.length + 1)))
+          .attr("y", svgHeight / 2 + 5) // Adjust the label's vertical position
+          .attr("text-anchor", "middle")
+          .style("font-size", "12px")
+          .style("fill", "black");
+
+
+        // Function to display circle details on click
+        function showDetails(d) {
+          alert(`Occupation: ${d.occupation}, Weekly Pay: ${d.weekly_pay}, Percentage Female: ${d.percentage_female}`);
+        }
+      });
+    </script>
+  </body>
+</html>
